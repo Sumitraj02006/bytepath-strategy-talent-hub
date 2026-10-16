@@ -1,0 +1,215 @@
+================================================================================
+   BYTEPATH STRATEGY, RESEARCH & TALENT ACQUISITION COMMAND CENTER
+   Real-Time Socket.io Multi-Role Executive Management Dashboard
+================================================================================
+
+1. PROJECT OVERVIEW
+--------------------------------------------------------------------------------
+Project Name       : BytePath Strategy, Research & Talent Hub
+Repository         : https://github.com/Sumitraj02006/bytepath-strategy-talent-hub
+Version            : 1.0.0
+Author / Lead      : Mayank Gaur (Head of Strategy, Research & Talent Acquisition)
+Primary Stack      : React 19, Vite, Node.js, Express, Socket.io, Supabase
+
+BytePath Command Center is a high-performance, real-time executive operations
+dashboard designed for high-growth educational institutions and tech academies.
+It integrates strategic roadmap planning, course/institutional research tracking,
+talent acquisition funnels, and task delegation into a single unified control room.
+
+The system features a dual-role architecture (Admin Panel vs. User Panel)
+powered by Socket.io, enabling real-time bi-directional synchronization, instant
+candidate stage transitions, live broadcast alerts, and active user presence tracking.
+
+
+2. CORE ARCHITECTURE & TECH STACK
+--------------------------------------------------------------------------------
+A. Frontend Layer:
+   - Framework     : React 19 (React DOM 19)
+   - Build Tool    : Vite 8.3
+   - Styling       : Pure Vanilla CSS with sleek modern dark SaaS aesthetic,
+                     glassmorphism, vibrant HSL accents, and micro-animations
+   - Client Socket : socket.io-client (v4.8)
+   - Icons         : Custom modular SVG Icon system
+
+B. Real-Time Backend Layer:
+   - Server Engine : Node.js (v25+) + Express 5
+   - WebSockets    : Socket.io Server (v4.8) running on port 4001
+   - CORS          : Permissive cross-origin communication for seamless local/cloud dev
+   - Multi-Tab Sync: Browser BroadcastChannel API fallback for offline/local tab sync
+   - Cloud DB Sync : Supabase client with PostgreSQL Realtime change subscription
+
+
+3. DUAL-ROLE SYSTEM: ADMIN PANEL vs. USER PANEL
+--------------------------------------------------------------------------------
+The dashboard incorporates a flexible role-based mode switcher:
+
+A. 👑 ADMIN PANEL (Broadcaster & Full Control):
+   - Persona        : Mayank Gaur (Executive Head)
+   - Permissions    : Full Create, Read, Update, and Delete (CRUD) access
+   - Capabilities   :
+     * Add, edit, or delete Strategic Priorities
+     * Add and evaluate Research Pipeline modules
+     * Add, edit, and delete Candidates
+     * Transition Candidate Hiring Stages (Applied -> Shortlisted -> Interviewed -> Selected)
+     * Create, toggle, and delete Operational Tasks
+     * Broadcast urgent Live Announcements across all connected User screens
+     * Live Broadcaster: Every modification automatically emits a Socket.io event
+
+B. 👁️ USER PANEL (Live Receiver & Read-Only Viewer):
+   - Persona        : Team Member, Student, Mentor, or Stakeholder
+   - Permissions    : Read-only real-time access
+   - Capabilities   :
+     * View executive overview, KPIs, and hiring pipeline in real-time
+     * Receive instant glowing toast alerts when Admin makes updates
+     * Automatic UI update without refreshing the page
+     * View top pinned Live Broadcast Announcements from Admin
+     * Action buttons (Add/Delete/Stage Transition) are disabled or hidden to prevent tampering
+
+
+4. KEY MODULES & FEATURES
+--------------------------------------------------------------------------------
+1. Executive Overview:
+   - Real-time KPIs (Active Projects, Open Opportunities, Research Tasks, Pipeline Count)
+   - Strategic Priority Cards with live progress bars
+   - Hiring Funnel stage breakdowns and pending approval alerts
+
+2. Strategic Priorities Management:
+   - Strategic roadmap initiatives (e.g., College MoUs, AI/ML Bootcamp launches)
+   - Filterable by Status (In Progress, Delayed, Completed) and Priority (High, Medium)
+   - Next Action step tracking and milestone deadlines
+
+3. Research & Opportunity Pipeline:
+   - Intelligence tracking for new curriculum, corporate upskilling, and vendor pitches
+   - Dual View: Interactive Kanban Board View & Data Table View
+   - Recommendation summaries and evaluation statuses
+
+4. Talent Acquisition & Candidate Pipeline:
+   - Detailed candidate profiles (colleges, interview scores, skills, contact info)
+   - Multi-stage recruitment tracker:
+     [Applied] -> [Shortlisted] -> [Interview Scheduled] -> [Interviewed] -> [Selected] -> [Joined]
+   - Admin stage switcher that broadcasts live updates to all viewer screens
+
+5. Team Overview & Capacity Management:
+   - Core leadership profiles, interns, and volunteer headcounts
+   - Department-wise capacity deficit analysis (Moderate vs. Critical Deficits)
+
+6. Tasks & Deadlines Management:
+   - Operational task execution with status toggles (To Do, In Progress, Completed)
+   - Categorized by Today, Upcoming, and Overdue deadlines
+
+7. Live Broadcast Announcement System:
+   - Admin modal to broadcast urgent notifications (High Priority vs. Urgent Alert)
+   - Flashes at the very top of all User screens instantly via Socket.io
+
+8. Live Presence & Connection Status:
+   - Live socket status badge (🟢 Socket.io Live / 🔴 Connecting)
+   - Active user counter displaying current Admins and Users connected simultaneously
+
+
+5. SOCKET.IO EVENT SPECIFICATION
+--------------------------------------------------------------------------------
+Event Name               Direction             Payload Description
+--------------------------------------------------------------------------------
+connection_established   Server -> Client      Sends client socket ID, presence stats, active announcement
+register_role            Client -> Server      { role: 'admin'|'user', name: string }
+presence_update          Server -> Broadcast   { admins: number, users: number, total: number }
+admin_action             Admin  -> Server      { actionType: string, payload: object, message: string }
+sync_update              Server -> All Clients Broadcasts Admin changes (ADD_CANDIDATE, UPDATE_STAGE, etc.)
+admin_announcement       Admin  -> Server      { title: string, message: string, priority: string }
+live_announcement        Server -> Broadcast   Broadcasts urgent announcement banner to all screens
+clear_announcement       Admin  -> Server      Clears the current active announcement
+live_announcement_clearedServer -> Broadcast   Removes the announcement banner on all client screens
+
+
+6. PROJECT DIRECTORY STRUCTURE
+--------------------------------------------------------------------------------
+Mayank_Strategy_Research_Talent_Dashboard/
+├── server.js                          # Standalone Socket.io & Express backend server
+├── package.json                       # Scripts, dependencies, and metadata
+├── vite.config.js                     # Vite build configuration
+├── index.html                         # Application entry HTML
+├── public/                            # Favicons and static assets
+├── src/
+│   ├── main.jsx                       # React DOM entry point
+│   ├── App.jsx                        # Master component with modals & ErrorBoundary
+│   ├── App.css / index.css            # Design tokens, typography, custom animations
+│   ├── context/
+│   │   └── DashboardContext.jsx       # Global State, Socket.io subscriptions, CRUD actions
+│   ├── services/
+│   │   ├── socket.js                  # Socket.io Client service (Singleton wrapper)
+│   │   └── supabase.js                # Supabase Realtime & BroadcastChannel fallbacks
+│   └── components/
+│       ├── Header.jsx                 # Top bar with Role switcher and Live Presence pill
+│       ├── Sidebar.jsx                # Navigation tabs and branding
+│       ├── LiveSyncIndicator.jsx      # Live toast popups & global announcement banner
+│       ├── ExecutiveOverview.jsx      # High-level KPIs and roadmap metrics
+│       ├── StrategicPriorities.jsx    # Roadmap initiatives table
+│       ├── ResearchPipeline.jsx       # Kanban & Table intelligence pipeline
+│       ├── CandidatePipeline.jsx      # Candidate management & stage transitions
+│       ├── TalentAcquisition.jsx      # Open job positions and hiring stats
+│       ├── TeamOverview.jsx           # Core team directory and capacity deficit tracker
+│       ├── TasksManagement.jsx        # Operational tasks and deadline tracking
+│       ├── WeeklyReport.jsx           # Formatted executive weekly report view
+│       ├── SettingsView.jsx           # Data reset and preferences
+│       ├── GlobalSearchModal.jsx      # Quick search modal across all dashboard items
+│       ├── NotificationsPanel.jsx     # Notifications dropdown
+│       ├── Icons.jsx                  # Modular vector icons
+│       └── Modals/
+│           ├── ItemModals.jsx         # Creation and edit modals for items
+│           └── BroadcastAnnouncementModal.jsx  # Admin live announcement broadcaster
+
+
+7. INSTALLATION & SETUP INSTRUCTIONS
+--------------------------------------------------------------------------------
+A. Prerequisites:
+   - Node.js (v18.0 or higher recommended)
+   - npm (v9.0 or higher)
+
+B. Installation:
+   1. Open terminal inside the project directory:
+      cd Mayank_Strategy_Research_Talent_Dashboard
+
+   2. Install all dependencies:
+      npm install
+
+C. Running the System:
+   - Option 1 (Run Both Server & Frontend Together):
+     npm run dev
+
+   - Option 2 (Run in Separate Terminals):
+     Terminal 1 (Backend Socket.io Server):
+       npm run server
+       --> Runs on http://localhost:4001
+
+     Terminal 2 (Frontend React App):
+       npm run dev:client
+       --> Runs on http://localhost:3000 (or http://localhost:5173)
+
+D. How to Test Real-Time Admin <-> User Sync:
+   1. Open Browser Window 1 (Admin Panel):
+      http://localhost:3000/?role=admin
+
+   2. Open Browser Window 2 (User Panel):
+      http://localhost:3000/?role=user
+      (Or simply click "🔗 Test User Window" in the Admin Header)
+
+   3. Place both windows side-by-side.
+   4. In Window 1 (Admin), go to "Candidates" and change candidate "Aarav Sharma"
+      stage from "Applied" to "Selected".
+   5. Watch Window 2 (User) INSTANTLY update the candidate's stage, accompanied
+      by a glowing real-time sync toast notification!
+   6. In Window 1, click "📢 Broadcast Alert", enter a message, and submit.
+      The announcement banner will immediately flash on Window 2.
+
+
+8. DEPLOYMENT & PRODUCTION
+--------------------------------------------------------------------------------
+- Production Build:
+  npm run build
+
+- Output Directory:
+  ./dist (HTML, CSS, Minified JS bundles)
+
+================================================================================
+                       DOCUMENT GENERATED SUCCESSFULLY
+================================================================================

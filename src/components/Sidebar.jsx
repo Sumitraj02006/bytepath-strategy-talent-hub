@@ -3,19 +3,22 @@ import { useDashboard } from '../context/DashboardContext';
 import { Icon } from './Icons';
 
 export const Sidebar = ({ mobileOpen, setMobileOpen }) => {
-  const { activeTab, setActiveTab } = useDashboard();
+  const { activeTab, setActiveTab, userRole } = useDashboard();
 
-  const navItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: 'dashboard' },
-    { id: 'strategy', label: 'Strategy', icon: 'strategy' },
-    { id: 'research', label: 'Research', icon: 'research' },
-    { id: 'opportunities', label: 'Opportunities', icon: 'opportunities' },
-    { id: 'talent', label: 'Talent Acquisition', icon: 'talent' },
-    { id: 'candidates', label: 'Candidates', icon: 'candidates' },
-    { id: 'team', label: 'Team', icon: 'team' },
-    { id: 'tasks', label: 'Tasks', icon: 'tasks' },
-    { id: 'reports', label: 'Reports', icon: 'reports' },
+  const navItems = userRole === 'admin' ? [
+    { id: 'admin-console', label: '👑 Admin Data Entry', icon: 'plus' },
+    { id: 'dashboard', label: 'Mayank Dashboard', icon: 'dashboard' },
+    { id: 'candidates', label: 'Candidate Pipeline', icon: 'candidates' },
+    { id: 'strategy', label: 'Strategic Priorities', icon: 'strategy' },
+    { id: 'research', label: 'Research Tasks', icon: 'research' },
+    { id: 'tasks', label: 'Tasks Operations', icon: 'tasks' },
     { id: 'settings', label: 'Settings', icon: 'settings' }
+  ] : [
+    { id: 'dashboard', label: 'Mayank Executive View', icon: 'dashboard' },
+    { id: 'candidates', label: 'Candidate Pipeline (Live)', icon: 'candidates' },
+    { id: 'strategy', label: 'Strategic Priorities (Live)', icon: 'strategy' },
+    { id: 'tasks', label: 'Action Tasks', icon: 'tasks' },
+    { id: 'reports', label: 'Weekly Summary', icon: 'reports' }
   ];
 
   return (

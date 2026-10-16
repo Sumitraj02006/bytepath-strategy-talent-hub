@@ -26,6 +26,7 @@ import {
 } from './components/Modals/ItemModals';
 import { LiveSyncIndicator } from './components/LiveSyncIndicator';
 import { BroadcastAnnouncementModal } from './components/Modals/BroadcastAnnouncementModal';
+import { AdminConsole } from './components/AdminConsole';
 
 class ErrorBoundary extends Component {
   constructor(props) {
@@ -133,6 +134,7 @@ const DashboardContent = () => {
         <Header mobileOpen={mobileOpen} setMobileOpen={setMobileOpen} />
 
         <main className="content-area">
+          {activeTab === 'admin-console' && <AdminConsole />}
           {activeTab === 'dashboard' && <ExecutiveOverview />}
           {activeTab === 'strategy' && <StrategicPriorities onOpenAddModal={() => handleOpenAdd('strategy')} onEditItem={(item) => handleOpenEdit('strategy', item)} />}
           {activeTab === 'research' && <ResearchPipeline onOpenAddModal={() => handleOpenAdd('research')} onEditItem={(item) => handleOpenEdit('research', item)} />}

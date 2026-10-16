@@ -161,11 +161,11 @@ export const LiveSyncIndicator = () => {
 };
 
 export const RoleHeaderBar = ({ onOpenBroadcastModal }) => {
-  const { userRole, setUserRole, socketConnected, presenceStats } = useDashboard();
+  const { userRole, setUserRole, socketConnected, presenceStats, setActiveTab } = useDashboard();
 
   const handleOpenUserWindow = () => {
     const userUrl = `${window.location.origin}${window.location.pathname}?role=user`;
-    window.open(userUrl, '_blank', 'width=1200,height=800');
+    window.open(userUrl, '_blank', 'width=1280,height=850');
   };
 
   return (
@@ -199,12 +199,12 @@ export const RoleHeaderBar = ({ onOpenBroadcastModal }) => {
         </span>
         {socketConnected && (
           <span style={{ color: 'var(--text-muted)', borderLeft: '1px solid rgba(255,255,255,0.1)', paddingLeft: '8px' }}>
-            {presenceStats.admins} Admin, {presenceStats.users} User
+            {presenceStats.admins} Admin, {presenceStats.users} Mayank
           </span>
         )}
       </div>
 
-      {/* Admin vs User Role Toggle Switch */}
+      {/* Admin vs Mayank Dashboard Switch */}
       <div style={{
         display: 'flex',
         alignItems: 'center',
@@ -214,7 +214,10 @@ export const RoleHeaderBar = ({ onOpenBroadcastModal }) => {
         padding: '2px'
       }}>
         <button
-          onClick={() => setUserRole('admin')}
+          onClick={() => {
+            setUserRole('admin');
+            setActiveTab('admin-console');
+          }}
           style={{
             display: 'flex',
             alignItems: 'center',
@@ -231,13 +234,16 @@ export const RoleHeaderBar = ({ onOpenBroadcastModal }) => {
               : 'transparent',
             color: userRole === 'admin' ? '#fff' : 'var(--text-secondary)'
           }}
-          title="Full editing and management permissions"
+          title="Admin Data Entry: Enter data to stream to Mayank"
         >
           <span>👑</span> Admin Panel
         </button>
 
         <button
-          onClick={() => setUserRole('user')}
+          onClick={() => {
+            setUserRole('user');
+            setActiveTab('dashboard');
+          }}
           style={{
             display: 'flex',
             alignItems: 'center',
@@ -254,9 +260,9 @@ export const RoleHeaderBar = ({ onOpenBroadcastModal }) => {
               : 'transparent',
             color: userRole === 'user' ? '#fff' : 'var(--text-secondary)'
           }}
-          title="Viewer view with real-time sync updates"
+          title="Mayank Dashboard: View only important live streamed information"
         >
-          <span>👁️</span> User Panel
+          <span>👁️</span> Mayank Dashboard
         </button>
       </div>
 

@@ -552,6 +552,9 @@ export const DashboardProvider = ({ children }) => {
   const [liveToast, setLiveToast] = useState(null);
   const [activeAnnouncement, setActiveAnnouncement] = useState(null);
   const [isBroadcastOpen, setIsBroadcastOpen] = useState(false);
+  const [syncLogs, setSyncLogs] = useState(() => [
+    { id: 'log-1', text: 'System connected to Socket.io Real-time engine', time: new Date().toLocaleTimeString(), type: 'SYSTEM' }
+  ]);
 
   const setUserRole = (role) => {
     setUserRoleState(role);
@@ -694,6 +697,9 @@ export const DashboardProvider = ({ children }) => {
             stats: { ...(prev.stats || {}), coreCount: (prev.stats?.coreCount || 0) + 1 }
           }));
           break;
+        case 'UPDATE_KPIS':
+          setKpis(payload);
+          break;
         case 'RESET_DATA':
           setKpis(initialKpis);
           setStrategyList(initialStrategy);
@@ -707,6 +713,17 @@ export const DashboardProvider = ({ children }) => {
         default:
           break;
       }
+
+      // Record in live sync audit log
+      setSyncLogs(prev => [
+        {
+          id: `log-${Date.now()}-${Math.random()}`,
+          text: message || `Updated: ${actionType.replace(/_/g, ' ')}`,
+          time: new Date().toLocaleTimeString(),
+          type: actionType
+        },
+        ...(Array.isArray(prev) ? prev.slice(0, 24) : [])
+      ]);
 
       // Show real-time notification toast
       setLiveToast({
@@ -1020,6 +1037,24 @@ export const DashboardProvider = ({ children }) => {
     }
   };
 
+  const updateKpis = (updatedKpis) => {
+    setKpis(updatedKpis);
+    socketService.emitAdminAction(
+      'UPDATE_KPIS',
+      updatedKpis,
+      `Admin updated executive KPI numbers`
+    );
+    setSyncLogs(prev => [
+      {
+        id: `log-${Date.now()}`,
+        text: `Admin updated executive KPI numbers`,
+        time: new Date().toLocaleTimeString(),
+        type: 'UPDATE_KPIS'
+      },
+      ...(Array.isArray(prev) ? prev.slice(0, 24) : [])
+    ]);
+  };
+
   const safeNotifications = Array.isArray(notifications) ? notifications : [];
   const unreadNotifCount = safeNotifications.filter(n => !n.isRead).length;
 
@@ -1029,6 +1064,8 @@ export const DashboardProvider = ({ children }) => {
       setUserRole,
       socketConnected,
       presenceStats,
+      syncLogs,
+      updateKpis,
       liveToast,
       dismissLiveToast,
       activeAnnouncement,
